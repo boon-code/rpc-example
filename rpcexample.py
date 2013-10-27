@@ -1,5 +1,6 @@
 import sys
 import os
+import socket
 import pasxmlrpc
 from optparse import OptionParser
 

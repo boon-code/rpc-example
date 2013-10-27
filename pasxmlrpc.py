@@ -45,6 +45,7 @@ class CATransport (Transport):
         :param server_certfile: Server-side certificate of the server to
                                 trust.
         """
+        Transport.__init__ (self)
         self._cafile = certfile
         self._keyfile = keyfile
         self._server_cafile = server_certfile
@@ -53,11 +54,6 @@ class CATransport (Transport):
         if self._connection and host == self._connection[0]:
             return self._connection[1]
         chost, self._extra_headers, x509 = self.get_host_info (host)
-        #
-        print ("X509: %s" % str (x509))
-        print ("Chost", chost)
-        print (str (self._extra_headers))
-        #
         context = ssl.SSLContext (ssl.PROTOCOL_SSLv23)
         context.load_verify_locations (cafile=self._server_cafile)
         context.verify_mode = ssl.CERT_REQUIRED
@@ -65,9 +61,6 @@ class CATransport (Transport):
                                key_file=self._keyfile, context=context,
                                check_hostname=False)
         self._connection = host, con
-        #
-        print (str (dir (self._connection[1])))
-        #
         return con
 
 class RPCProxy (ServerProxy):
@@ -85,4 +78,4 @@ class RPCProxy (ServerProxy):
                                 trust.
         """
         transport = CATransport (certfile, keyfile, server_certfile)
-        xmlrpc.client.ServerProxy.__init__ (self, url, transport)
+        ServerProxy.__init__ (self, url, transport)
